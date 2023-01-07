@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  postgres:
+    build:
+      context: postgres
+      dockerfile: Dockerfile
+
+    image: matcha-postgres
+
+    ports:
+      - "5432:5432"
+
+    environment:
+      POSTGRES_DB: matcha
+      POSTGRES_USER: matcha
+      POSTGRES_PASSWORD: password
+
+    volumes:
+      - "./postgres/.data:/var/lib/postgresql/data"
+
+  front:
+    image: nginx:1.23.3
+
+    configs:
+      - source: nginx
+        target: /etc/nginx/conf.d/default.conf
+        mode: 644
+        gid: "0"
+        uid: "0"
+
+    ports:
+      - "8080:80"
+
+    volumes:
+      - "./front/dist:/app"
+
+configs:
+  nginx:
+    file: nginx.conf

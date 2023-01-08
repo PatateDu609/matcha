@@ -1,0 +1,112 @@
+@startuml
+
+skinparam linetype ortho
+
+enum Gender {
+	Male
+	Female
+	Other
+}
+
+enum Orientation {
+	Heterosexuality
+	Homosexuality
+	Bisexuality
+}
+
+enum Relation {
+	Like
+	Dislike
+	Block
+	BlockedBy
+	Report
+	Connected
+}
+
+enum Event {
+	Liked
+	LikedBack
+	Messaged
+	Unliked
+	ProfileChecked
+}
+
+entity User {
+	* id: UUID
+	--
+	* first_name: String
+	* last_name: String
+	* gender: Gender
+	* preference: Orientation
+	* email: String
+	* verified: boolean
+	* password: String
+	* fame_rating: int64
+	* GPS: ?
+	bio: String
+}
+
+entity Image {
+	* id: UUID
+	--
+	* owner: User
+	* path: String
+	* is_main: boolean
+}
+
+entity Tag {
+	* id: UUID
+	--
+	* value: String
+}
+
+entity Chat {
+	* id: UUID
+	--
+	* member1: User
+	* member2: User
+}
+
+entity Message {
+	* id: UUID
+	--
+	* chat_id: Chat
+	* author: User
+	* content: String
+	* date: DateTime with timezone
+}
+
+entity Relationship {
+	* initiator: User
+    * target: User
+	--
+    * type: Relationship
+}
+
+entity Notification {
+	* id: UUID
+	--
+	* origin_user: User
+	* target_user: User
+	* type: Event
+	* seen: boolean
+	* date: DateTime
+	content: String
+}
+
+User *-up- Gender
+User *-- Orientation
+Relationship *-- Relation
+Notification *-- Event
+
+User }o--|| Image
+User }o--o{ Tag
+User }o--|| "2" Notification
+Chat ||--o{ "2   " User
+
+Chat }o--|| Message
+User }o--|| Message
+
+Relationship ||--o{ "    2" User
+
+@enduml

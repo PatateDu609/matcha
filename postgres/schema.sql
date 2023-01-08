@@ -84,5 +84,5 @@ create index on public.UserTags (tag_id);
 
 create index on public.Users (gender);
 create index on public.Users (orientation);
-create index on public.Users (fame_rating integer_ops desc);
+create index on public.Users (fame_rating desc);
 create index on public.Users (birth_date date_ops);

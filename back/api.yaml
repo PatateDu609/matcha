@@ -1,0 +1,70 @@
+swagger: "2.0"
+info:
+  title: Bubbler
+  description: A dating website to bubble up your relations!
+  version: 1.0.0
+host: www
+schemes:
+  - http
+paths:
+  /sign-up:
+    post:
+      description: Creates a new account
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          description: The form's payload
+          name: SignUpPayload
+          schema:
+            $ref: '#/definitions/sign-up-payload'
+      responses:
+        201:
+          description: The account has been created
+          schema:
+            $ref: '#/definition/sign-up-response-payload'
+        400:
+          description: User sent bad request
+        500:
+          description: An internal error occurred
+
+  /log-in:
+    post:
+      description: Log in to an existing account
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Account found, logged in
+
+definitions:
+  sign-up-payload:
+    properties:
+      first-name:
+        type: string
+      last-name:
+        type: string
+      username:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+    required:
+      - first-name
+      - last-name
+      - username
+      - email
+      - password
+
+  sign-up-response-payload:
+    properties:
+      token:
+        type: string
+
+    required:
+      - token

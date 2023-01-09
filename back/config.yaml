@@ -1,0 +1,9 @@
+api_port: 4000
+log_level: trace
+
+database:
+  host: localhost
+  port: 4000
+  username: matcha
+  password: password
+  name: matcha

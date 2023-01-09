@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
+	_ "github.com/PatateDu609/matcha/init"
+	"github.com/PatateDu609/matcha/routes"
 )
 
 func main() {
-	fmt.Printf("Hello World!")
+	_ = routes.Setup()
 }

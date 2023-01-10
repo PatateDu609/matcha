@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/PatateDu609/matcha/utils/log"
 	"github.com/jackc/pgx/v5"
@@ -48,4 +49,18 @@ func GetConnFromCtx(ctx context.Context) (conn *pgxpool.Conn, err error) {
 	conn = nil
 	err = fmt.Errorf("no database connection found")
 	return
+}
+
+func AcquireMiddleware(next http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		ctx, err := Acquire(r.Context())
+		if err != nil {
+			log.Logger.Errorf("couldn't acquire database connection: %s", err)
+			return
+		}
+		r = r.WithContext(ctx)
+		next.ServeHTTP(w, r)
+	}
+
+	return http.HandlerFunc(fn)
 }

@@ -16,17 +16,21 @@ comment on column public.Tags.value is 'This is the actual tag value';
 create table if not exists public.Users
 (
     id          uuid               not null default uuid_generate_v4() primary key,
+
+    -- given during the registration process
+    username    varchar(256)       not null unique,
     first_name  varchar(256)       not null,
     last_name   varchar(256)       not null,
     full_name   varchar(512)       not null generated always as (first_name || ' ' || last_name) stored,
-    gender      public.gender      not null default 'Other'::public.gender,
-    birth_date  date               not null,
-    orientation public.orientation not null default 'Bisexuality'::public.orientation,
     email       varchar(512)       not null unique,
     verified    boolean            not null default false,
     password    varchar(256)       not null check (password <> ''),
-    position    point              null     default null,
+
+    gender      public.gender      not null default 'Other'::public.gender,
+    birth_date  date               null,
+    orientation public.orientation not null default 'Bisexuality'::public.orientation,
     fame_rating bigint             not null default 0,
+    position    point              null     default null,
     biography   text               null     default null
 );
 

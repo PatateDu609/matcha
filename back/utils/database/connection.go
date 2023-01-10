@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/PatateDu609/matcha/utils/log"
 	"github.com/jackc/pgx/v5"
@@ -35,4 +36,16 @@ func Acquire(ctx context.Context) (context.Context, error) {
 	}
 
 	return context.WithValue(ctx, ctxKey, conn), nil
+}
+
+func GetConnFromCtx(ctx context.Context) (conn *pgxpool.Conn, err error) {
+	err = nil
+	conn, ok := ctx.Value(ctxKey).(*pgxpool.Conn)
+	if ok {
+		return
+	}
+
+	conn = nil
+	err = fmt.Errorf("no database connection found")
+	return
 }

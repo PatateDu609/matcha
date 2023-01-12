@@ -9,12 +9,22 @@
         </router-link>
 
         <q-tabs align="left">
-          <q-route-tab to="/chats" label="Chats" />
+          <q-route-tab to="/browse"> 
+            <q-icon name="groups" size="2rem" />
+          </q-route-tab>
         </q-tabs>
 
         <q-space />
-
         <q-tabs align="right">
+          <q-route-tab to="/chat"> 
+            <q-icon name="question_answer" size="2rem" />
+          </q-route-tab>
+          <q-route-tab to="/profile"> 
+            <q-icon name="account_circle" size="2rem" />
+          </q-route-tab>
+          <q-route-tab to="/notifications"> 
+            <q-icon name="notifications" size="2rem" />
+          </q-route-tab>
           <q-route-tab to="/sign-up" label="Sign up" />
           <q-route-tab to="/log-in" label="Log in" />
         </q-tabs>
@@ -25,11 +35,12 @@
       <router-view />
     </q-page-container>
 
-    <q-footer class="bg-grey-8 text-white">
-      <!-- We need to find what to put in the footer... -->
+    <q-footer class="row items-center justify-evenly">
+      <a>Made by gboucett & rbourgea</a>
     </q-footer>
   </q-layout>
 </template>
 
-<script setup lang="ts">
+<script>
+
 </script>

@@ -11,7 +11,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [{path: '', component: () => import('pages/SignUpPage.vue') }],
   },
-
+  {
+    path: '/browse',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{path: '', component: () => import('pages/BrowseUsers.vue') }],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

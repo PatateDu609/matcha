@@ -24,6 +24,7 @@
           </q-route-tab>
           <q-route-tab to="/notifications"> 
             <q-icon name="notifications" size="2rem" />
+            <q-badge color="red" floating>4</q-badge>
           </q-route-tab>
           <q-route-tab to="/sign-up" label="Sign up" />
           <q-route-tab to="/log-in" label="Log in" />

@@ -26,6 +26,7 @@ create table if not exists public.Users
     verified    boolean            not null default false,
     password    varchar(256)       not null check (password <> ''),
 
+    -- given during the onboarding process (after registration...)
     gender      public.gender      not null default 'Other'::public.gender,
     birth_date  date               null,
     orientation public.orientation not null default 'Bisexuality'::public.orientation,

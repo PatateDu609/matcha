@@ -8,6 +8,7 @@ func init() {
 	initViper()
 	initLogger()
 	initDatabase()
+	initSession()
 
 	log.Logger.Infoln("everything has been initialized!")
 }

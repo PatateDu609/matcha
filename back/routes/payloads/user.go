@@ -7,8 +7,8 @@ import (
 type User struct {
 	FirstName  string  `json:"first-name"`
 	LastName   string  `json:"last-name"`
+	FullName   string  `json:"full-name"`
 	Username   string  `json:"username"`
-	FullName   string  `json:"fullname"`
 	Email      string  `json:"email"`
 	Biography  *string `json:"bio"`
 	FameRating int     `json:"score"`

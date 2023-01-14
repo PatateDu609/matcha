@@ -16,11 +16,26 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Logger.Infof("received: %+v", payload)
-	if err = payload.Push(r); err != nil {
+	if err = payload.Push(w, r); err != nil {
 		log.Logger.Errorf("%+v", err)
 		http.Error(w, "internal error: couldn't insert user", http.StatusInternalServerError)
-	} else {
-		log.Logger.Infof("The user has been correctly inserted")
-		w.WriteHeader(http.StatusCreated)
+		return
 	}
+
+	log.Logger.Infof("The user has been correctly inserted with id=%s", payload.ID)
+
+	response := payloads.SignUpResponse{
+		ID: payload.ID.String(),
+	}
+
+	log.Logger.Infof("Sending response: %+v", response)
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := payloads.Marshal(response, w); err != nil {
+		log.Logger.Errorf("couldn't send response to user: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
 }

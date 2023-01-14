@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"net/http"
+
 	"github.com/PatateDu609/matcha/utils/database"
 	"github.com/PatateDu609/matcha/utils/log"
 	"github.com/go-chi/chi"
@@ -15,12 +17,33 @@ func Setup() (router *chi.Mux) {
 	router.Use(log.NewRouterLogger(log.Logger))
 	router.Use(middleware.Recoverer)
 	router.Use(database.AcquireMiddleware)
-	router.Use(cors.AllowAll().Handler)
+
+	//goland:noinspection HttpUrlsUsage
+	corsOptions := cors.Options{
+		Debug:            true,
+		AllowCredentials: true,
+		AllowedHeaders:   []string{"*"},
+		AllowedOrigins:   []string{"http://*", "https://*"},
+		AllowedMethods: []string{
+			http.MethodHead,
+			http.MethodOptions,
+			http.MethodConnect,
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodDelete,
+			http.MethodPut,
+			http.MethodPatch,
+		},
+	}
+
+	router.Use(cors.New(corsOptions).Handler)
+
+	router.Get("/user/{uuid}", getUser)
 
 	router.Group(func(r chi.Router) {
 		r.Use(middleware.AllowContentType("application/json"))
+
 		r.Post("/sign-up", signUp)
-		r.Get("/user/{uuid}", getUser)
 	})
 	return
 }

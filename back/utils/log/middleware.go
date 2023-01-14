@@ -65,7 +65,6 @@ func (l *LogrusEntry) Write(status, bytes int, header http.Header, elapsed time.
 
 func (l *LogrusEntry) Panic(v interface{}, stack []byte) {
 	l.Logger = l.Logger.WithFields(logrus.Fields{
-		"stack": string(stack),
 		"panic": fmt.Sprintf("%+v", v),
 	})
 }

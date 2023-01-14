@@ -1,13 +1,16 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 
 import {ref} from 'vue';
 import {api} from 'boot/axios';
+import {useUserStore} from 'stores/user';
 
 let username = ref('')
 let password = ref('')
 let email = ref('')
 let firstName = ref('')
 let lastName = ref('')
+
+const userStore = useUserStore()
 
 function onSubmit() {
   let data = {
@@ -18,10 +21,21 @@ function onSubmit() {
     'last-name': lastName.value,
   }
 
+  type SignUpPayload = {
+    id: string
+  }
+
   console.log(data)
 
-  api.post('/sign-up', data)
-    .then(value => console.log(value))
+  api.post<SignUpPayload>('/sign-up', data)
+    .then(response => {
+      let userID = response.data.id
+
+      console.log(response)
+      console.log(userID)
+
+      userStore.fetchUser(userID).then()
+    })
     .catch(reason => console.error(reason))
 }
 </script>
@@ -32,43 +46,43 @@ function onSubmit() {
       <div class="col" style="max-width: 400px">
         <q-form class="column q-gutter-md" @submit="onSubmit">
           <q-input
+            v-model="username"
+            label="Username"
+            name="username"
             outlined
             type="text"
-            v-model="username"
-            name="username"
-            label="Username"
           />
 
           <q-input
+            v-model="password"
+            label="Password"
+            name="password"
             outlined
             type="password"
-            v-model="password"
-            name="password"
-            label="Password"
           />
 
           <q-input
-            outlined
-            type="text"
             v-model="email"
-            name="email"
             label="Email"
+            name="email"
+            outlined
+            type="text"
           />
 
           <q-input
-            outlined
-            type="text"
             v-model="firstName"
-            name="first-name"
             label="First Name"
+            name="first-name"
+            outlined
+            type="text"
           />
 
           <q-input
+            v-model="lastName"
+            label="Last Name"
+            name="last-name"
             outlined
             type="text"
-            v-model="lastName"
-            name="last-name"
-            label="Last Name"
           />
 
           <q-btn color="secondary" type="submit">Sign up</q-btn>

@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 335.38 456">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 335.38 456">
   <defs>
     <style>
       .cls-1 {
-        fill: #e94e34;
+      fill: #e94e34;
       }
 
       .cls-2 {
-        fill: #bdd24b;
+      fill: #bdd24b;
       }
 
       .cls-3 {
-        fill: #5a4832;
+      fill: #5a4832;
       }
 
       .cls-4 {
-        fill: url(#Dégradé_sans_nom_44);
+      fill: url(#Dégradé_sans_nom_44);
       }
     </style>
-    <linearGradient id="Dégradé_sans_nom_44" data-name="Dégradé sans nom 44" x1="167.42" y1="456" x2="167.42" y2="166.89" gradientUnits="userSpaceOnUse">
+    <linearGradient id="Dégradé_sans_nom_44" data-name="Dégradé sans nom 44" x1="167.42" y1="456" x2="167.42"
+                    y2="166.89" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#5aac31"/>
       <stop offset=".34" stop-color="#6eb333"/>
       <stop offset="1" stop-color="#a1c638"/>

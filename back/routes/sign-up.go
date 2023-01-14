@@ -8,7 +8,7 @@ import (
 )
 
 func signUp(w http.ResponseWriter, r *http.Request) {
-	payload, err := payloads.Marshal[payloads.SignUp](r.Body)
+	payload, err := payloads.Unmarshal[payloads.SignUp](r.Body)
 	if err != nil {
 		log.Logger.Errorf("bad request: %+v", err)
 		http.Error(w, "Bad formed request", http.StatusBadRequest)

@@ -5,13 +5,10 @@ import (
 	"io"
 )
 
-// Marshal takes a request's body as parameter and marshals it to return a type-safe object containing the request's data.
-func Marshal[T any](input io.ReadCloser) (T, error) {
-	var payload T
-	decoder := json.NewDecoder(input)
+// Marshal takes a request's struct as parameter and marshals it to return a type-safe object containing the request's body.
+func Marshal(data any, w io.Writer) (error) {
 
-	if err := decoder.Decode(&payload); err != nil {
-		return payload, err
-	}
-	return payload, nil
+	encoder := json.NewEncoder(w)
+
+	return encoder.Encode(data)
 }

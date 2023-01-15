@@ -3,6 +3,7 @@
 import {ref} from 'vue';
 import {api} from 'boot/axios';
 import {useUserStore} from 'stores/user';
+import { useRouter } from 'vue-router';
 
 let username = ref('')
 let password = ref('')
@@ -11,6 +12,8 @@ let firstName = ref('')
 let lastName = ref('')
 
 const userStore = useUserStore()
+
+const router = useRouter()
 
 function onSubmit() {
   let data = {
@@ -34,7 +37,7 @@ function onSubmit() {
       console.log(response)
       console.log(userID)
 
-      userStore.fetchUser(userID).then()
+      userStore.fetchUser(userID).then( () => router.push('/'))
     })
     .catch(reason => console.error(reason))
 }

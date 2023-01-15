@@ -1,32 +1,13 @@
 <script lang="ts" setup>
 
-import {api} from 'boot/axios';
+import { useUserStore } from 'stores/user';
 
-type payload = {
-  FirstName: string
-  LastName: string
-  Username: string
-  FullName: string
-  Email: string
-  Biography: string
-  FameRating: number
-}
-
-let data: payload;
-let loading = true;
-
-api.get<payload>('/user/780a6250-b31e-4eb9-9e12-6b80ba743df8')
-  .then(value => {
-    data = value;
-    loading = false;
-    console.log(data)
-  })
-  .catch(reason => console.error(reason))
+const userStore = useUserStore()
 
 </script>
 
 <template>
-  <template v-if="loading">
+  <template v-if="userStore.loading">
     uwu <!-- here use a loaded you prefer -->
   </template>
 
@@ -45,7 +26,7 @@ api.get<payload>('/user/780a6250-b31e-4eb9-9e12-6b80ba743df8')
           <div class="row no-wrap items-center">
             <q-badge color="green" floating transparent>Online</q-badge>
             <div class="col text-h6 ellipsis">
-              {{ data.fullname }}
+              {{ userStore.fullName }}
             </div>
             <div class="col-auto text-grey text-caption q-pt-md row no-wrap items-center">
               <q-icon name="place"/>
@@ -53,12 +34,12 @@ api.get<payload>('/user/780a6250-b31e-4eb9-9e12-6b80ba743df8')
             </div>
           </div>
           <div class="row no-wrap items-center">
-            <q-rating v-model="ratingModel" color="red-7" icon="favorite_border" size="2em"/>
+            <q-rating v-model="userStore.fameRating" color="red-7" icon="favorite_border" size="2em"/>
             <span class="text-caption text-grey q-ml-sm">3.2 (551)</span>
           </div>
           <q-item>
             <div class="text-caption text-grey">
-              Small description about me
+              {{ userStore.bio }}
               <q-badge color="blue" label="#fun" outline/>
               <q-badge color="secondary" label="#code" outline/>
               <q-badge color="orange" label="#bubbler" outline/>

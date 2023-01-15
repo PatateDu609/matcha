@@ -7,11 +7,11 @@ import (
 )
 
 type Redis struct {
-	Host     string
-	Port     int
-	Username string
-	Password string
-	DB       int
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
+	DB       int    `mapstructure:"db"`
 }
 
 func (conf *Redis) GetClient() *redis.Client {

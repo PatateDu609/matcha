@@ -2,12 +2,16 @@ package init
 
 import (
 	"github.com/PatateDu609/matcha/config"
-	"github.com/PatateDu609/matcha/utils/log"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 func initViper() {
+	defaultAPIConf := config.API{
+		Host: "localhost",
+		Port: 4000,
+	}
+
 	defaultDbConf := config.Database{
 		Host:     "localhost",
 		Port:     5432,
@@ -25,7 +29,7 @@ func initViper() {
 	}
 
 	conf := viper.New()
-	conf.SetDefault("api_port", 4000)
+	conf.SetDefault("api", defaultAPIConf)
 	conf.SetDefault("log_level", "info")
 	conf.SetDefault("database", defaultDbConf)
 	conf.SetDefault("redis", defaultRedisConf)
@@ -36,15 +40,6 @@ func initViper() {
 	conf.AddConfigPath("/app")
 	if err := conf.ReadInConfig(); err != nil {
 		logrus.Warnf("couldn't read config file: %s", err)
-	}
-	dbConf := defaultDbConf
-	redisConf := defaultRedisConf
-
-	if confDatabase, ok := conf.Get("database").(config.Database); ok {
-		dbConf = confDatabase
-	}
-	if confRedis, ok := conf.Get("redis").(config.Redis); ok {
-		redisConf = confRedis
 	}
 
 	logrusLevel := logrus.InfoLevel
@@ -57,13 +52,30 @@ func initViper() {
 	}
 
 	config.Conf = config.Config{
-		APIPort:     conf.GetInt("api_port"),
-		Database:    dbConf,
-		LogLevel:    logrusLevel,
-		RedisClient: redisConf.GetClient(),
+		API:      defaultAPIConf,
+		Database: defaultDbConf,
+		LogLevel: logrusLevel,
 	}
 
+	if err := conf.UnmarshalKey("api", &config.Conf.API); err != nil {
+		logrus.Errorf("coudln't read API config: %s", err)
+	}
+	if err := conf.UnmarshalKey("database", &config.Conf.Database); err != nil {
+		logrus.Errorf("coudln't read database config: %s", err)
+	}
+
+	redisConf := defaultRedisConf
+	if err := conf.UnmarshalKey("redis", &redisConf); err != nil {
+		logrus.Errorf("coudln't read redis config: %s", err)
+	}
+	config.Conf.RedisClient = redisConf.GetClient()
+
+	if err := conf.UnmarshalKey("mail", &config.Conf.Mail); err != nil {
+		logrus.Fatalf("couldn't read mail config: %s", err)
+	}
+	config.Conf.Mail.Authenticate()
+
 	if config.Conf.RedisClient == nil {
-		log.Logger.Fatalf("couldn't connect to redis")
+		logrus.Fatalf("couldn't connect to redis")
 	}
 }

@@ -1,11 +1,10 @@
 package jwt
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
 	"errors"
 	"time"
 
+	"github.com/PatateDu609/matcha/auth/jwt/key"
 	"github.com/lestrrat-go/jwx/v2/jwa"
 	"github.com/lestrrat-go/jwx/v2/jwt"
 	errors2 "github.com/pkg/errors"
@@ -25,8 +24,8 @@ func SignToken(data map[string]any) ([]byte, error) {
 
 	builder := jwt.NewBuilder()
 
-	for key, val := range data {
-		builder.Claim(key, val)
+	for k, val := range data {
+		builder.Claim(k, val)
 	}
 
 	token, err := builder.
@@ -40,12 +39,7 @@ func SignToken(data map[string]any) ([]byte, error) {
 		return nil, errors2.Wrap(err, ErrGeneratingToken.Error())
 	}
 
-	key, err := rsa.GenerateKey(rand.Reader, 2048)
-	if err != nil {
-		return nil, errors2.Wrap(err, errors2.Wrap(errors2.Errorf("couldn't generate private key"), ErrGeneratingToken.Error()).Error())
-	}
-
-	signed, err := jwt.Sign(token, jwt.WithKey(jwa.RS256, key))
+	signed, err := jwt.Sign(token, jwt.WithKey(jwa.RS256, key.Private()))
 	if err != nil {
 		return nil, errors2.Wrap(err, errors2.Wrap(errors2.Errorf("couldn't sign token"), ErrGeneratingToken.Error()).Error())
 	}

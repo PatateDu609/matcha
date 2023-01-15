@@ -19,3 +19,7 @@ go.work
 postgres/.data
 
 .idea
+
+back/config.yaml
+back/auth/jwt/key/private.pem
+postgres_password

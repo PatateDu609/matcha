@@ -8,10 +8,11 @@ import (
 const BcryptCost = 12
 
 type Config struct {
-	APIPort     int
+	API API
 	Database    Database
 	LogLevel    logrus.Level
 	RedisClient *redis.Client
+	Mail        Mail
 }
 
 var Conf Config

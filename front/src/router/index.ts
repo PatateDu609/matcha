@@ -41,7 +41,7 @@ export default route(function (/* { store, ssrContext } */) {
     let authorized = false;
     const userStore = useUserStore();
 
-    if (userStore.uuid != '') return true;
+    if (userStore.isLogged) return true;
 
     await userStore
       .fetchCurrentUser()

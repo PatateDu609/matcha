@@ -63,6 +63,13 @@ export const useUserStore = defineStore('user', {
 
     loading: true,
   }),
+
+  getters: {
+    isLogged(): boolean {
+      return !this.loading && this.uuid != '';
+    },
+  },
+
   actions: {
     async fetchUser(userID: string) {
       this.uuid = userID;
@@ -85,7 +92,7 @@ export const useUserStore = defineStore('user', {
     async fetchCurrentUser(): Promise<void> {
       return new Promise<void>((resolve, reject) => {
         api
-          .get<currentUserPayload>('/user/', {
+          .get<CurrentUserPayload>('/user/', {
             responseType: 'json',
           })
           .then((response) => {

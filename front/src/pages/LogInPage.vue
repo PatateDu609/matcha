@@ -37,8 +37,8 @@ function onSubmit() {
         <q-form class="column q-gutter-md" @submit="onSubmit">
           <q-input
             v-model="identifier"
-            label="Username"
-            name="username"
+            label="Username or Email"
+            name="identifier"
             outlined
             type="text"
           />

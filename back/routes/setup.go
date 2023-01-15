@@ -38,12 +38,16 @@ func Setup() (router *chi.Mux) {
 
 	router.Use(cors.New(corsOptions).Handler)
 
-	router.Get("/user/{uuid}", getUser)
+	router.Route("/user", func(r chi.Router) {
+		r.Get("/", getCurrentUser) // returns the current user (based on its session id)
+		r.Get("/{uuid}", getUser)  // returns the pointed out user
+	})
 
 	router.Group(func(r chi.Router) {
 		r.Use(middleware.AllowContentType("application/json"))
 
 		r.Post("/sign-up", signUp)
+		r.Post("/log-in", logIn)
 	})
 	return
 }

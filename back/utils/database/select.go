@@ -32,6 +32,7 @@ func Select[T Relation](ctx context.Context, cond *Condition, options ...Option)
 	queryBuilder.WriteString(fmt.Sprintf("SELECT %s FROM %q", columns, instanceOf.GetName()))
 	var values []any
 	if cond != nil {
+		cond = cond.first()
 		values = cond.Values()
 		queryBuilder.WriteString(fmt.Sprintf(" WHERE %s", cond.String()))
 	}

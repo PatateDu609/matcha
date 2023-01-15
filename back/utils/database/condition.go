@@ -127,6 +127,7 @@ func (cond *Condition) linkLogical(op logicalOperator, expression *Condition) *C
 		next:  expression,
 		prev:  last,
 	}
+	expression.prev = last.next
 	return last
 }
 

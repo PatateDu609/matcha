@@ -10,6 +10,7 @@ const { isLogged } = storeToRefs(userStore);
 </script>
 
 <template>
+  <!-- header -->
   <q-layout view="hHh LpR fff">
     <q-header class="bg-primary text-white" height-hint="98" reveal>
       <q-toolbar>

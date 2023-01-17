@@ -41,6 +41,8 @@ func Setup() (router *chi.Mux) {
 	router.Route("/user", func(r chi.Router) {
 		r.Get("/", getCurrentUser) // returns the current user (based on its session id)
 		r.Get("/{uuid}", getUser)  // returns the pointed out user
+
+		r.Put("/verify", verify)
 	})
 
 	router.Group(func(r chi.Router) {

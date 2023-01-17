@@ -31,7 +31,7 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 
 	log.Logger.Infof("Sending response: %+v", response)
 
-	if err := auth.ConfirmEmail(payload.ID.String(), payload.Username, payload.Email); err != nil {
+	if err := auth.SendEmailConfirmation(payload.ID.String(), payload.Username, payload.Email); err != nil {
 		log.Logger.Errorf("couldn't send confirmation email: %s", err)
 	}
 

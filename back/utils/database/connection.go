@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"runtime"
 	"time"
 
 	"github.com/PatateDu609/matcha/utils/log"
@@ -23,15 +24,18 @@ func SetupPool(config *pgxpool.Config) {
 		return nil
 	}
 
-	config.MaxConns = 10
-
-	config.MaxConnLifetime = time.Minute * 10
+	config.MaxConns = int32(runtime.NumCPU() * 5)
+	config.ConnConfig.ConnectTimeout = time.Second * 2
 
 	config.ConnConfig.Tracer = Tracer{}
 
+	config.BeforeAcquire = func(ctx context.Context, conn *pgx.Conn) bool {
+		log.Logger.Traceln("Acquiring connection...")
+		return true
+	}
+
 	var err error
 	pool, err = pgxpool.NewWithConfig(context.Background(), config)
-
 	if err != nil {
 		log.Logger.Fatalf("couldn't connect to database: %+v", err)
 	}
@@ -51,15 +55,18 @@ func GetConnFromCtx(ctx context.Context) (conn *pgxpool.Conn, err error) {
 
 func AcquireMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		conn, err := pool.Acquire(r.Context())
+		ctx := r.Context()
+		conn, err := pool.Acquire(context.Background())
 		if err != nil {
 			log.Logger.Errorf("couldn't acquire database connection: %s", err)
 			return
 		}
-		defer conn.Release()
+		ctx = context.WithValue(ctx, ctxKey, conn)
 
-		r = r.WithContext(context.WithValue(r.Context(), ctxKey, conn))
+		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
+
+		conn.Release()
 	}
 
 	return http.HandlerFunc(fn)

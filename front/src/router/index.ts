@@ -9,6 +9,8 @@ import {
 
 import routes from './routes';
 import { useUserStore } from 'stores/user';
+import { useRouterStore } from 'stores/router';
+import { storeToRefs } from 'pinia';
 
 /*
  * If not building with SSR mode, you can
@@ -53,6 +55,11 @@ export default route(function (/* { store, ssrContext } */) {
       });
 
     if (authorized) return true;
+
+    const routerStore = useRouterStore();
+    const { redirectURL } = storeToRefs(routerStore);
+    redirectURL.value = to.path;
+
     return { path: '/log-in' };
   });
 

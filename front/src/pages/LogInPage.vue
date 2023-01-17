@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-
 import { ref } from 'vue';
 import { api } from 'boot/axios';
 import { CurrentUserPayload, useUserStore } from 'stores/user';
 import { useRouter } from 'vue-router';
+import { useRouterStore } from 'stores/router';
+import { storeToRefs } from 'pinia';
 
 let identifier = ref('');
 let password = ref('');
@@ -11,22 +12,26 @@ let password = ref('');
 const router = useRouter();
 
 const userStore = useUserStore();
+const routerStore = useRouterStore();
+const { redirectURL } = storeToRefs(routerStore);
 
 function onSubmit() {
   let data = {
-    'identifier': identifier.value,
-    'password': password.value
+    identifier: identifier.value,
+    password: password.value,
   };
 
   console.log(data);
 
-  api.post<CurrentUserPayload>('/log-in', data)
-    .then(response => {
+  api
+    .post<CurrentUserPayload>('/log-in', data)
+    .then((response) => {
       userStore.fillWithPayload(response.data);
 
-      router.push('/');
+      if (redirectURL.value != undefined) router.push(redirectURL.value);
+      else router.push('/');
     })
-    .catch(reason => console.error(reason));
+    .catch((reason) => console.error(reason));
 }
 </script>
 
@@ -58,5 +63,4 @@ function onSubmit() {
   </q-page>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

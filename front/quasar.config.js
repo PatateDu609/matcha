@@ -8,7 +8,7 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
-const {configure} = require('quasar/wrappers');
+const { configure } = require('quasar/wrappers');
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -53,7 +53,7 @@ module.exports = configure(function (/* ctx */) {
         node: 'node16',
       },
 
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      vueRouterMode: 'history', // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
@@ -63,7 +63,7 @@ module.exports = configure(function (/* ctx */) {
       // publicPath: '/',
       // analyze: true,
       env: {
-        API: 'http://localhost:4000'
+        API: 'http://localhost:4000',
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
@@ -88,7 +88,7 @@ module.exports = configure(function (/* ctx */) {
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
     framework: {
       config: {
-        dark: 'auto'
+        dark: 'auto',
       },
 
       // iconSet: 'material-icons', // Quasar icon set
@@ -102,9 +102,7 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: [
-        'Dark'
-      ],
+      plugins: ['Dark'],
     },
 
     // animations: 'all', // --- includes all animations

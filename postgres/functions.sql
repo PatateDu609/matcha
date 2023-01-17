@@ -9,20 +9,30 @@ alter table if exists public.Messages
 
 
 
-create or replace procedure public.block_user(initiator uuid, target uuid)
-    language sql AS
+create or replace procedure public.block_user(initiator_user uuid, target_user uuid)
+    language sql as
 $$
 begin;
 begin transaction;
 
 insert into relationships (initiator, target, type)
-values (initiator, target, 'Block')
+values (initiator_user, target_user, 'Block')
 on conflict(initiator, target) do update set type='Block';
 
 insert into relationships (initiator, target, type)
-values (target, initiator, 'BlockedBy')
+values (target_user, initiator_user, 'BlockedBy')
 on conflict(target, initiator) do update set type='BlockedBy';
 
 commit;
 end;
+$$;
+
+
+-- Verify the uuid with the given UUID
+create or replace procedure public.verify_user(user_id uuid)
+    language plpgsql as
+$$
+begin
+    update public.users set verified= true where id = user_id;
+end
 $$;

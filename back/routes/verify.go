@@ -23,7 +23,12 @@ func verify(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess := session.GlobalSessions.SessionStart(w, r)
+	sess, err := session.GlobalSessions.SessionStart(w, r)
+	if err != nil {
+		log.Logger.Errorf("couldn't start session: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	if err := auth.ConfirmEmail(r.Context(), bytes, sess); err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		log.Logger.Errorf("couldn't confirm email: %s", err)

@@ -37,7 +37,6 @@ func (s User) GetMandatoryColumns() []string {
 }
 
 func GetUserByIdentifier(w http.ResponseWriter, r *http.Request, identifier string) *User {
-
 	cond := database.NewCondition("username", database.EqualTo, identifier).
 		Or(database.NewCondition("email", database.EqualTo, identifier))
 
@@ -48,14 +47,19 @@ func GetUserByIdentifier(w http.ResponseWriter, r *http.Request, identifier stri
 	arr, err := database.Select[User](r.Context(), cond)
 	if err != nil {
 		log.Logger.Errorf("couldn't get user: %+v", err)
-		http.Error(w, "internal error: couldn't get user", http.StatusInternalServerError)
+
+		if w != nil {
+			http.Error(w, "internal error: couldn't get user", http.StatusInternalServerError)
+		}
 
 		return nil
 	}
 
 	if len(arr) == 0 {
 		log.Logger.Errorf("couldn't find user for identifier `%s`", identifier)
-		w.WriteHeader(http.StatusNotFound)
+		if w != nil {
+			w.WriteHeader(http.StatusNotFound)
+		}
 		return nil
 	}
 

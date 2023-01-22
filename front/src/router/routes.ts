@@ -27,6 +27,11 @@ const routes: RouteRecordRaw[] = [
     children: [{ path: '', component: () => import('pages/ProfilePage.vue') }],
   },
   {
+    path: '/profile/edit',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/ProfileEdit.vue') }],
+  },
+  {
     path: '/validate/email',
     component: () => import('pages/VerifyPage.vue'),
   },

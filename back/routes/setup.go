@@ -2,7 +2,9 @@ package routes
 
 import (
 	"net/http"
+	"net/http/httputil"
 
+	"github.com/PatateDu609/matcha/config"
 	"github.com/PatateDu609/matcha/utils/database"
 	"github.com/PatateDu609/matcha/utils/log"
 	"github.com/go-chi/chi"
@@ -23,7 +25,7 @@ func Setup() (router *chi.Mux) {
 		Debug:            true,
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"*"},
-		AllowedOrigins:   []string{"http://*", "https://*"},
+		AllowedOrigins:   []string{"http://localhost:9000", "https://localhost:9000"},
 		AllowedMethods: []string{
 			http.MethodHead,
 			http.MethodOptions,
@@ -35,8 +37,11 @@ func Setup() (router *chi.Mux) {
 			http.MethodPatch,
 		},
 	}
+	corsHandler := cors.New(corsOptions)
+	corsHandler.Log = log.Logger
+	router.Use(corsHandler.Handler)
 
-	router.Use(cors.New(corsOptions).Handler)
+	router.Handle("/socket.io/", httputil.NewSingleHostReverseProxy(config.Conf.SocketIO.ParsedURL))
 
 	router.Route("/user", func(r chi.Router) {
 		r.Get("/", getCurrentUser) // returns the current user (based on its session id)
@@ -51,5 +56,6 @@ func Setup() (router *chi.Mux) {
 		r.Post("/sign-up", signUp)
 		r.Post("/log-in", logIn)
 	})
+
 	return
 }

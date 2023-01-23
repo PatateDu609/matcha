@@ -4,6 +4,7 @@ create type public.gender as enum ('Male', 'Female', 'Other');
 create type public.orientation as enum ('Heterosexuality', 'Homosexuality', 'Bisexuality');
 create type public.relation as enum ('Like', 'Dislike', 'Block', 'BlockedBy', 'Report', 'Connected');
 create type public.event as enum ('Liked', 'LikedBack', 'Messaged', 'Unliked', 'ProfileChecked');
+create domain public.Rating as int8 check (value between 1 and 5);
 
 create table if not exists public.Tags
 (
@@ -65,6 +66,14 @@ create table if not exists public.Relationships
     initiator uuid            not null references public.Users (id),
     target    uuid            not null references public.Users (id) check ( target <> initiator ),
     type      public.relation not null,
+    primary key (initiator, target)
+);
+
+create table if not exists public.Grades
+(
+    initiator uuid not null references public.Users (id),
+    target    uuid not null references public.Users (id) check ( target <> initiator ),
+    grade     public.Rating  not null,
     primary key (initiator, target)
 );
 

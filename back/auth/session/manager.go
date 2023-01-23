@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/PatateDu609/matcha/utils/log"
 	"github.com/google/uuid"
 )
 
@@ -32,7 +33,11 @@ func NewManager(provideName, cookieName string, maxlifetime int64) (*Manager, er
 	if !ok {
 		return nil, fmt.Errorf("%s (%s)", errProviderNotFound, provideName)
 	}
-	return &Manager{provider: provider, cookieName: cookieName, maxlifetime: maxlifetime}, nil
+	return &Manager{
+		provider:    provider,
+		cookieName:  cookieName,
+		maxlifetime: maxlifetime,
+	}, nil
 }
 
 // CheckSessionCookie returns true if the session cookie is set, and false otherwise
@@ -54,13 +59,31 @@ func (manager *Manager) sessionID() string {
 	return uid.String()
 }
 
-func (manager *Manager) SessionStart(w http.ResponseWriter, r *http.Request) (session Session) {
+// SessionStart retrieves the session cookie from the http.Request provided, if
+// the cookie is not present or if its value is empty, a new session is created
+// and is sent to the user by the mean of the http.ResponseWriter object. If no
+// http.ResponseWriter is provided, no new session will be created and nil will
+// be returned.
+func (manager *Manager) SessionStart(w http.ResponseWriter, r *http.Request) (session Session, err error) {
 	manager.lock.Lock()
 	defer manager.lock.Unlock()
 	cookie, err := r.Cookie(manager.cookieName)
 	if err != nil || cookie.Value == "" {
+		if err != nil {
+			log.Logger.Errorf("couldn't get cookie: %s", err)
+			log.Logger.Warn("trying to init new session")
+			err = nil
+		}
+		if w == nil {
+			session = nil
+			return
+		}
+
 		sid := manager.sessionID()
-		session, _ = manager.provider.SessionInit(sid)
+		session, err = manager.provider.SessionInit(sid)
+		if err != nil {
+			log.Logger.Errorf("couldn't init new session: %s", err)
+		}
 		cookie := http.Cookie{
 			Name:     manager.cookieName,
 			Value:    url.QueryEscape(sid),
@@ -71,21 +94,30 @@ func (manager *Manager) SessionStart(w http.ResponseWriter, r *http.Request) (se
 
 		http.SetCookie(w, &cookie)
 	} else {
-		sid, _ := url.QueryUnescape(cookie.Value)
-		session, _ = manager.provider.SessionRead(sid)
+		var sid string
+		sid, err = url.QueryUnescape(cookie.Value)
+		if err != nil {
+			return
+		}
+		session, err = manager.provider.SessionRead(sid)
 	}
 	return
 }
 
-func (manager *Manager) SessionDestroy(w http.ResponseWriter, r *http.Request) {
+func (manager *Manager) SessionDestroy(w http.ResponseWriter, r *http.Request) error {
 	cookie, err := r.Cookie(manager.cookieName)
 	if err != nil || cookie.Value == "" {
-		return
+		if err != nil {
+			return err
+		}
+		return nil
 	}
 	manager.lock.Lock()
 	defer manager.lock.Unlock()
 
-	_ = manager.provider.SessionDestroy(cookie.Value)
+	if err = manager.provider.SessionDestroy(cookie.Value); err != nil {
+		return err
+	}
 	expiration := time.Now()
 	cookie = &http.Cookie{
 		Name:     manager.cookieName,
@@ -95,6 +127,7 @@ func (manager *Manager) SessionDestroy(w http.ResponseWriter, r *http.Request) {
 		MaxAge:   -1,
 	}
 	http.SetCookie(w, cookie)
+	return err
 }
 
 func (manager *Manager) GC() {

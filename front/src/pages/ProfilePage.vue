@@ -4,6 +4,14 @@ import { useUserStore } from 'stores/user';
 
 const userStore = useUserStore()
 
+let uri = window.location.search.substring(1); 
+let params = new URLSearchParams(uri);
+let profileOwner = params.get("user");
+
+// let profileInfo = await fetchUser(profileOwner);
+
+// console.log(profileInfo);
+
 </script>
 
 <template>
@@ -35,7 +43,7 @@ const userStore = useUserStore()
           </div>
           <div class="row no-wrap items-center">
             <q-rating v-model="userStore.fameRating" color="red-7" icon="favorite_border" size="2em"/>
-            <span class="text-caption text-grey q-ml-sm">3.2 (551)</span>
+            <span class="text-caption text-grey q-ml-sm">{{ userStore.fameRating }} (551)</span>
           </div>
           <q-item>
             <div class="text-caption text-grey">
@@ -46,13 +54,20 @@ const userStore = useUserStore()
             </div>
           </q-item>
           <q-item>
-            <q-btn color="primary" label="Like" push style="margin:10px;"/>
-            <q-btn color="red" label="Block" push style="margin:10px;">
-              <q-tooltip>This user will no longer be able to talk to you.</q-tooltip>
-            </q-btn>
-            <q-btn color="orange" label="Report" push style="margin:10px;">
-              <q-tooltip>This user will be reported to Bubbler staff</q-tooltip>
-            </q-btn>
+            <template v-if="!userStore.username">
+              <q-btn color="primary" label="Like" push style="margin:10px;"/>
+              <q-btn color="red" label="Block" push style="margin:10px;">
+                <q-tooltip>This user will no longer be able to talk to you.</q-tooltip>
+              </q-btn>
+              <q-btn color="orange" label="Report" push style="margin:10px;">
+                <q-tooltip>This user will be reported to Bubbler staff</q-tooltip>
+              </q-btn>
+            </template>
+            <template v-if="userStore.username">
+              <q-btn color="grey" label="Edit Profile" push style="margin:10px;" href="http://localhost:9000/profile/edit"/>
+              <q-btn color="red" label="Likers" push style="margin:10px;"/>
+              <q-btn color="blue" label="Viewers" push style="margin:10px;"/>
+            </template>
           </q-item>
         </q-card-section>
       </q-card>

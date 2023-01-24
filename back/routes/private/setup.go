@@ -1,10 +1,11 @@
-package routes
+package private
 
 import (
 	"net/http"
-	"net/http/httputil"
 
 	"github.com/PatateDu609/matcha/config"
+	"github.com/PatateDu609/matcha/routes/private/internal/db/room"
+	"github.com/PatateDu609/matcha/routes/private/internal/session"
 	"github.com/PatateDu609/matcha/utils/database"
 	"github.com/PatateDu609/matcha/utils/log"
 	"github.com/go-chi/chi"
@@ -16,6 +17,7 @@ func Setup() (router *chi.Mux) {
 	router = chi.NewRouter()
 
 	router.Use(middleware.RealIP)
+	router.Use(middleware.RequestID)
 	router.Use(log.NewRouterLogger(log.Logger))
 	router.Use(middleware.Recoverer)
 	router.Use(database.AcquireMiddleware)
@@ -25,7 +27,7 @@ func Setup() (router *chi.Mux) {
 		Debug:            true,
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"*"},
-		AllowedOrigins:   []string{"http://localhost:9000", "https://localhost:9000"},
+		AllowedOrigins:   []string{config.Conf.SocketIO.URL}, // these routes are only accessible by socket.io
 		AllowedMethods: []string{
 			http.MethodHead,
 			http.MethodOptions,
@@ -41,20 +43,16 @@ func Setup() (router *chi.Mux) {
 	corsHandler.Log = log.Logger
 	router.Use(corsHandler.Handler)
 
-	router.Handle("/socket.io/", httputil.NewSingleHostReverseProxy(config.Conf.SocketIO.ParsedURL))
-
-	router.Route("/user", func(r chi.Router) {
-		r.Get("/", getCurrentUser) // returns the current user (based on its session id)
-		r.Get("/{uuid}", getUser)  // returns the pointed out user
-
-		r.Put("/verify", verify)
+	router.Route("/session", func(r chi.Router) {
+		r.Get("/uuid", session.GetUUID)
 	})
 
-	router.Group(func(r chi.Router) {
-		r.Use(middleware.AllowContentType("application/json"))
-
-		r.Post("/sign-up", signUp)
-		r.Post("/log-in", logIn)
+	router.Route("/db", func(r chi.Router) {
+		r.Route("/room", func(roomRoute chi.Router) {
+			roomRoute.Post("/create", room.Create)
+			roomRoute.Get("/{sid}", room.Get)
+			roomRoute.Delete("/{sid}", room.Delete)
+		})
 	})
 
 	return

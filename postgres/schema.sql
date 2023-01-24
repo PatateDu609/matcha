@@ -43,11 +43,12 @@ create table if not exists public.UserTags
     primary key (user_id, tag_id)
 );
 
-create table if not exists public.Chats
+create table if not exists public.Rooms
 (
     id    uuid not null default uuid_generate_v4() primary key,
     user1 uuid not null references public.Users (id),
-    user2 uuid not null references public.Users (id) check (user1 <> user2),
+    user2 uuid not null references public.Users (id)
+        constraint check_room_same_user check (user1 <> user2),
 
     unique (user1, user2)
 );
@@ -55,7 +56,7 @@ create table if not exists public.Chats
 create table if not exists public.Messages
 (
     id        uuid                     not null default uuid_generate_v4() primary key,
-    chat_id   uuid                     not null references public.Chats (id),
+    chat_id   uuid                     not null references public.Rooms (id),
     author_id uuid                     not null references public.Users (id),
     content   text                     not null,
     date      timestamp with time zone not null default now()
@@ -71,9 +72,9 @@ create table if not exists public.Relationships
 
 create table if not exists public.Grades
 (
-    initiator uuid not null references public.Users (id),
-    target    uuid not null references public.Users (id) check ( target <> initiator ),
-    grade     public.Rating  not null,
+    initiator uuid          not null references public.Users (id),
+    target    uuid          not null references public.Users (id) check ( target <> initiator ),
+    grade     public.Rating not null,
     primary key (initiator, target)
 );
 

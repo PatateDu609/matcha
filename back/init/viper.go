@@ -8,8 +8,9 @@ import (
 
 func initViper() {
 	defaultAPIConf := config.API{
-		Host: "localhost",
-		Port: 4000,
+		Host:         "localhost",
+		Port:         4000,
+		InternalPort: 4001,
 	}
 
 	defaultDbConf := config.Database{

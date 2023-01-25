@@ -71,13 +71,15 @@ func (manager *Manager) SessionStart(w http.ResponseWriter, r *http.Request) (se
 	if err != nil || cookie.Value == "" {
 		if err != nil {
 			log.Logger.Errorf("couldn't get cookie: %s", err)
-			log.Logger.Warn("trying to init new session")
 			err = nil
 		}
 		if w == nil {
+			log.Logger.Errorf("no session will be initialized")
+			err = fmt.Errorf("no session has been found")
 			session = nil
 			return
 		}
+		log.Logger.Warn("trying to init new session")
 
 		sid := manager.sessionID()
 		session, err = manager.provider.SessionInit(sid)

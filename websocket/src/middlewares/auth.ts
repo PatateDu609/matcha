@@ -2,44 +2,21 @@ import {ExtendedError} from "socket.io/dist/namespace";
 import {Socket} from "socket.io";
 import {parse} from "cookie";
 import {log} from "../log";
-import {NewClient} from "../redis";
+import {createRouter} from "../axios";
 import {Logger} from "tslog";
 
 async function getSessionUUID(subLogger: Logger<unknown>, sid: string): Promise<string> {
-	const client = NewClient()
-
 	return new Promise((resolve, reject) => {
-		let goOn = true;
-		client.connect().catch(reason => {
-			reject(reason)
-			goOn = false
-		})
-		if (!goOn)
-			return
+		const router = createRouter(sid)
 
-		client.ZSCORE("sessions", sid).then(score => {
-			subLogger.info(`score is ${score}`)
-			if (score == null)
-			{
-				goOn = false;
-				reject("score is null")
-			}
-		}).catch(
-			reason => {
-				subLogger.error(`couldn't get score for \`${sid}\`: ${reason}`)
-				goOn = false
-				reject(reason)
-			}
-		)
-		if (!goOn)
-			return
+		router.get("/session/uuid").then(result => {
+			const data: { uuid: string } = JSON.parse(result.data)
+			subLogger.info(`got uuid: ${data.uuid}`)
 
-		client.HGET(`sess:${sid}`, "uuid").then(uuid => {
-			subLogger.info(`got uuid: ${uuid}`)
-			if (uuid == null)
-				reject("couldn't get uuid")
+			if (data && data.uuid)
+				resolve(data.uuid)
 			else
-				resolve(uuid)
+				reject("got invalid uuid")
 		}).catch(reason => {
 			subLogger.error(`couldn't get uuid for \`${sid}\`: ${reason}`)
 			reject(reason)
@@ -76,7 +53,6 @@ export function auth(namespace: string): (socket: Socket, next: (err?: ExtendedE
 
 		getSessionUUID(subLogger, sid).then(uuid => {
 			socket.handshake.auth['user'] = uuid
-
 			next()
 		}).catch(reason => {
 			subLogger.error(`error while checking session: ${reason}`)

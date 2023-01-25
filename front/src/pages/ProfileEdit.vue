@@ -33,7 +33,7 @@ function onSubmit() {
     id: string
   }
 
-  api.post<EditUserPayload>('/edit-user', data).then(response => {
+  api.patch<EditUserPayload>('/edit-user', data).then(response => {
     router.push('/profile')
   })
   .catch(reason => console.error(reason))

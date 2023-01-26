@@ -49,6 +49,8 @@ func Setup() (router *chi.Mux) {
 		r.Get("/{uuid}", getUser)  // returns the pointed out user
 
 		r.Put("/verify", verify)
+
+		r.Patch("/set", setCurrentUser) // modify the current user (based on its session id)
 	})
 
 	router.Group(func(r chi.Router) {

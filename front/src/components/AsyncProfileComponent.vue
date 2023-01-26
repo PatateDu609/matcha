@@ -99,7 +99,7 @@ export type UserPayload = {
 
 let data = ref(null)
 
-await new Promise((r) => setTimeout(r, 1000)) // define here the loading time
+// await new Promise((r) => setTimeout(r, 1000)) // define here the loading time
 
 if (profileOwner != null) {
   try {
@@ -120,5 +120,4 @@ if (profileOwner != null) {
     console.error(e)
   }
 }
-console.log(data)
 </script>

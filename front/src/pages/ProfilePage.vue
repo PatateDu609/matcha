@@ -18,7 +18,7 @@ const userStore = useUserStore()
         <AsyncProfileComponent />
       </template>
       <template #fallback>
-        <q-page class="row items-center justify-evenly">
+        <!-- <q-page class="row items-center justify-evenly">
           <q-card class="my-card">
             <q-skeleton width="400px" height="400px" />
             <q-card-section>
@@ -39,7 +39,7 @@ const userStore = useUserStore()
               </q-item>
             </q-card-section>
           </q-card>
-        </q-page>
+        </q-page> -->
       </template>
     </Suspense>
   </template>

@@ -32,6 +32,11 @@ const routes: RouteRecordRaw[] = [
     children: [{ path: '', component: () => import('pages/ProfileEdit.vue') }],
   },
   {
+    path: '/chat',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/ChatPage.vue') }],
+  },
+  {
     path: '/validate/email',
     component: () => import('pages/VerifyPage.vue'),
   },

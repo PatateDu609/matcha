@@ -1,99 +1,108 @@
 <script lang="ts" setup>
-
-import {ref} from 'vue';
-import {api} from 'boot/axios';
-import {useUserStore} from 'stores/user';
+import { ref } from 'vue';
+import { api } from 'boot/axios';
+import { useUserStore } from 'stores/user';
 import { useRouter } from 'vue-router';
+import SocialButtons from 'components/SocialButtons.vue';
+import { ContextType } from 'components/models';
 
-let username = ref('')
-let password = ref('')
-let email = ref('')
-let firstName = ref('')
-let lastName = ref('')
+let username = ref('');
+let password = ref('');
+let email = ref('');
+let firstName = ref('');
+let lastName = ref('');
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 
-const router = useRouter()
+const router = useRouter();
 
 function onSubmit() {
   let data = {
-    'username': username.value,
-    'password': password.value,
-    'email': email.value,
+    username: username.value,
+    password: password.value,
+    email: email.value,
     'first-name': firstName.value,
     'last-name': lastName.value,
-  }
+  };
 
   type SignUpPayload = {
-    id: string
-  }
+    id: string;
+  };
 
-  console.log(data)
+  console.log(data);
 
-  api.post<SignUpPayload>('/sign-up', data)
-    .then(response => {
-      let userID = response.data.id
+  api
+    .post<SignUpPayload>('/sign-up', data)
+    .then((response) => {
+      let userID = response.data.id;
 
-      console.log(response)
-      console.log(userID)
+      console.log(response);
+      console.log(userID);
 
-      userStore.fetchUser(userID).then( () => router.push('/'))
+      userStore.fetchUser(userID).then(() => router.push('/'));
     })
-    .catch(reason => console.error(reason))
+    .catch((reason) => console.error(reason));
 }
 </script>
 
 <template>
   <q-page class="row justify-center items-center" padding>
-    <div class="row col justify-center">
-      <div class="col" style="max-width: 400px">
-        <q-form class="column q-gutter-md" @submit="onSubmit">
-          <q-input
-            v-model="username"
-            label="Username"
-            name="username"
-            outlined
-            type="text"
-          />
+    <div class="col">
+      <div class="row justify-center">
+        <div class="col" style="max-width: 400px">
+          <q-form class="column q-gutter-md" @submit="onSubmit">
+            <q-input
+              v-model="username"
+              label="Username"
+              name="username"
+              outlined
+              type="text"
+            />
 
-          <q-input
-            v-model="password"
-            label="Password"
-            name="password"
-            outlined
-            type="password"
-          />
+            <q-input
+              v-model="password"
+              label="Password"
+              name="password"
+              outlined
+              type="password"
+            />
 
-          <q-input
-            v-model="email"
-            label="Email"
-            name="email"
-            outlined
-            type="text"
-          />
+            <q-input
+              v-model="email"
+              label="Email"
+              name="email"
+              outlined
+              type="text"
+            />
 
-          <q-input
-            v-model="firstName"
-            label="First Name"
-            name="first-name"
-            outlined
-            type="text"
-          />
+            <q-input
+              v-model="firstName"
+              label="First Name"
+              name="first-name"
+              outlined
+              type="text"
+            />
 
-          <q-input
-            v-model="lastName"
-            label="Last Name"
-            name="last-name"
-            outlined
-            type="text"
-          />
+            <q-input
+              v-model="lastName"
+              label="Last Name"
+              name="last-name"
+              outlined
+              type="text"
+            />
 
-          <q-btn color="secondary" type="submit">Sign up</q-btn>
-        </q-form>
+            <q-btn color="secondary" type="submit">Sign up</q-btn>
+          </q-form>
+        </div>
+      </div>
+
+      <q-separator spaced="6px" style="visibility: hidden" />
+
+      <div class="row justify-center">
+        <social-buttons :context-type="ContextType.SIGN_UP" />
       </div>
     </div>
   </q-page>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

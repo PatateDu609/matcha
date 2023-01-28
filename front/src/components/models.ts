@@ -1,8 +1,4 @@
-export interface Todo {
-  id: number;
-  content: string;
-}
-
-export interface Meta {
-  totalCount: number;
+export enum ContextType {
+  LOG_IN,
+  SIGN_UP,
 }

@@ -22,6 +22,8 @@ services:
     secrets:
       - postgres_password
 
+    command: ["postgres", "-c", "log_statement=all"]
+
   front:
     image: nginx:1.23.3
 

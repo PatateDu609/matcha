@@ -1,6 +1,8 @@
 package database
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -19,6 +21,8 @@ type Relation interface {
 	GetMandatoryColumns() []string
 }
 
+type Patch map[string]any
+
 type Writable interface {
 	Relation
 
@@ -33,4 +37,21 @@ type Base struct {
 	CreatedAt time.Time  // entry's creation date
 	UpdatedAt *time.Time // entry's last update date
 	DeletedAt *time.Time // entry's deletion date
+}
+
+func (patch Patch) prepareUpdate() (string, []any) {
+	l := len(patch)
+	columns := make([]string, 0, l)
+	values := make([]any, 0, l)
+
+	i := 1
+
+	for column, value := range patch {
+		columns = append(columns, fmt.Sprintf("%s = $%d", column, i))
+		values = append(values, value)
+
+		i++
+	}
+
+	return strings.Join(columns, ", "), values
 }

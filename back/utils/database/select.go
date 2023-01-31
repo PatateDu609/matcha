@@ -64,6 +64,6 @@ func Select[T Relation](ctx context.Context, cond *Condition, options ...Option)
 		res = append(res, row.Elem().Interface().(T))
 	}
 
-	log.Logger.Debug(fmt.Sprintf("got %d rows", len(res)))
+	log.Logger.Debugf("got %d rows", len(res))
 	return res, nil
 }

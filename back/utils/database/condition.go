@@ -139,11 +139,11 @@ func (cond *Condition) Or(expression *Condition) *Condition {
 	return cond.linkLogical(or, expression)
 }
 
-func (cond *Condition) String() string {
+func (cond *Condition) stringify(startIdx int) string {
 	res := strings.Builder{}
 
 	current := cond.first()
-	for i := 0; ; i++ {
+	for i := startIdx; ; i++ {
 		res.WriteString(current.leftValue)
 		res.WriteString(fmt.Sprintf(" = $%d", i+1))
 
@@ -157,6 +157,10 @@ func (cond *Condition) String() string {
 	}
 
 	return res.String()
+}
+
+func (cond *Condition) String() string {
+	return cond.stringify(0)
 }
 
 func (cond *Condition) Values() []any {

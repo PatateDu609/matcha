@@ -58,6 +58,7 @@ func Setup() (router *chi.Mux) {
 
 		r.Post("/sign-up", signUp)
 		r.Post("/log-in", logIn)
+		r.Post("/upload", uploadFile)
 	})
 
 	return

@@ -54,7 +54,7 @@ func Setup() (router *chi.Mux) {
 	})
 
 	router.Group(func(r chi.Router) {
-		r.Use(middleware.AllowContentType("application/json"))
+		r.Use(middleware.AllowContentType("application/json", "multipart/form-data"))
 
 		r.Post("/sign-up", signUp)
 		r.Post("/log-in", logIn)

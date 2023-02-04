@@ -70,6 +70,13 @@ create table if not exists public.Relationships
     primary key (initiator, target)
 );
 
+create table if not exists public.Images
+(
+    owner     uuid            not null references public.Users (id),
+    path      varchar(256)    not null,
+    primary key (initiator, target)
+);
+
 create table if not exists public.Grades
 (
     initiator uuid          not null references public.Users (id),

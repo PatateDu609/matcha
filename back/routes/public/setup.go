@@ -48,6 +48,8 @@ func Setup() (router *chi.Mux) {
 		r.Get("/", getCurrentUser) // returns the current user (based on its session id)
 		r.Get("/{uuid}", getUser)  // returns the pointed out user
 
+		r.Get("/images/{uuid}", getImage)
+
 		r.Put("/verify", verify)
 
 		r.Patch("/set", setCurrentUser) // modify the current user (based on its session id)

@@ -3,6 +3,7 @@
 import { ref } from 'vue'
 import { useUserStore } from 'stores/user';
 import {api} from 'boot/axios';
+import BaseImageInput from '../components/BaseImageInput.vue';
 
 const userStore = useUserStore()
 
@@ -16,6 +17,8 @@ let genreOptions = ref(["Homme", "Femme", "Autre"]);
 let preferenceSelect = ref("Hétérosexuel");
 let preferenceOptions = ref(["Hétérosexuel", "Homosexuel", "Bisexuel"]);
 let geoCheck = ref(false);
+
+let imageFile = ref(null);
 
 function onSubmit() {
   let data = {
@@ -37,6 +40,8 @@ function onSubmit() {
     router.push('/profile')
   })
   .catch(reason => console.error(reason))
+
+  
 }
 
 </script>
@@ -80,10 +85,17 @@ function onSubmit() {
                   <q-select outlined v-model="preferenceSelect" :options="preferenceOptions" label="Preference *" />
               </q-item>
             </div>
-            <div style="padding-left:40px;">
+            <div style="overflow-y:hidden;overflow-x:scroll;width:400px;height:100px;white-space:nowrap;">
+              <base-image-input v-model="imageFile"/>
+              <base-image-input v-model="imageFile"/>
+              <base-image-input v-model="imageFile"/>
+              <base-image-input v-model="imageFile"/>
+              <base-image-input v-model="imageFile"/>
+            </div>
+            <!-- <div style="padding-left:40px;">
               <q-uploader url="http://localhost:4000/upload" label="Profile Picture upload" field-name="myFile"
               multiple batch accept=".png, jpeg, .jpg, image/*" max-files="5"/>
-            </div>
+            </div> -->
             <!-- <q-checkbox v-model="geoCheck" label="Autoriser l'app à me géolocaliser ?" /> -->
             <q-item>
               <q-btn color="green" label="Save" push type="submit"/>

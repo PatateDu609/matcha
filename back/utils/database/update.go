@@ -30,15 +30,13 @@ func Update[T Relation](ctx context.Context, patch Patch, cond *Condition) ([]T,
 
 	req := fmt.Sprintf("UPDATE %s SET %s WHERE %s RETURNING %s", tableName, patchString, condString, columns)
 
-	rows, err := conn.Query(ctx, req, []any{patchValues, condValues}...)
+	values := make([]any, 0, len(patchValues)+len(condValues))
+	values = append(values, patchValues...)
+	values = append(values, condValues...)
+	rows, err := conn.Query(ctx, req, values...)
 	if err != nil {
 		return nil, err
 	}
-
-	if !rows.CommandTag().Update() {
-		return nil, fmt.Errorf("no row has been updated")
-	}
-	log.Logger.Tracef("updated %d", rows.CommandTag().RowsAffected())
 
 	reflectedType := valueOf.Type()
 	for rows.Next() {
@@ -54,6 +52,12 @@ func Update[T Relation](ctx context.Context, patch Patch, cond *Condition) ([]T,
 		log.Logger.Trace(fmt.Sprintf("current row: %q", row))
 		res = append(res, row.Elem().Interface().(T))
 	}
+
+	rows.Close()
+	if !rows.CommandTag().Update() {
+		return nil, fmt.Errorf("no row has been updated")
+	}
+	log.Logger.Tracef("updated %d", rows.CommandTag().RowsAffected())
 
 	log.Logger.Debugf("updated %d rows", len(res))
 	return res, nil

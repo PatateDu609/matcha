@@ -59,7 +59,7 @@ function onSubmit() {
               type="password"
             />
 
-            <q-btn color="secondary" type="submit">Sign up</q-btn>
+            <q-btn color="secondary" type="submit">Log in</q-btn>
           </q-form>
         </div>
       </div>

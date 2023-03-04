@@ -4,9 +4,10 @@ create type public.gender as enum ('Male', 'Female', 'Other');
 create type public.orientation as enum ('Heterosexuality', 'Homosexuality', 'Bisexuality');
 create type public.relation as enum ('Like', 'Dislike', 'Block', 'BlockedBy', 'Report', 'Connected');
 create type public.event as enum ('Liked', 'LikedBack', 'Messaged', 'Unliked', 'ProfileChecked');
-create domain public.Rating as int8 check (value between 1 and 5);
+create type public.oauth_provider as enum ('google', 'discord', 'github', '42');
+create domain public.rating as int8 check (value between 1 and 5);
 
-create table if not exists public.Tags
+create table if not exists public.tags
 (
     id    uuid not null default uuid_generate_v4() primary key,
     value text not null unique
@@ -14,7 +15,7 @@ create table if not exists public.Tags
 
 comment on column public.Tags.value is 'This is the actual tag value';
 
-create table if not exists public.Users
+create table if not exists public.users
 (
     id          uuid               not null default uuid_generate_v4() primary key,
 
@@ -36,36 +37,55 @@ create table if not exists public.Users
     biography   text               null     default null
 );
 
-create table if not exists public.UserTags
+create table if not exists public.user_oauth
 (
-    user_id uuid not null references public.Users (id),
-    tag_id  uuid not null references public.Tags (id),
+    id            uuid                     not null default uuid_generate_v4() primary key,
+
+    user_id       uuid                     null     default null references public.users (id),
+    provider      oauth_provider           not null,
+    state         uuid                     null     default uuid_generate_v4(),
+    access_token  varchar(1024)            null     default null,
+    refresh_token varchar(1024)            null     default null,
+    expiration    timestamp with time zone null     default null,
+
+    unique (user_id, provider),
+    unique (state),
+    check (
+            (state is not null and (access_token is null and refresh_token is null and expiration is null)) or
+            (state is null and (access_token is not null and expiration is not null))
+        )
+);
+
+create table if not exists public.user_tags
+(
+    user_id uuid not null references public.users (id),
+    tag_id  uuid not null references public.tags (id),
     primary key (user_id, tag_id)
 );
 
-create table if not exists public.Rooms
+create table if not exists public.rooms
 (
     id    uuid not null default uuid_generate_v4() primary key,
-    user1 uuid not null references public.Users (id),
-    user2 uuid not null references public.Users (id)
+    user1 uuid not null references public.users (id),
+    user2 uuid not null references public.users (id)
         constraint check_room_same_user check (user1 <> user2),
 
     unique (user1, user2)
 );
 
-create table if not exists public.Messages
+create table if not exists public.messages
 (
     id        uuid                     not null default uuid_generate_v4() primary key,
-    chat_id   uuid                     not null references public.Rooms (id),
-    author_id uuid                     not null references public.Users (id),
+    chat_id   uuid                     not null references public.rooms (id),
+    author_id uuid                     not null references public.users (id),
     content   text                     not null,
     date      timestamp with time zone not null default now()
 );
 
-create table if not exists public.Relationships
+create table if not exists public.relationships
 (
-    initiator uuid            not null references public.Users (id),
-    target    uuid            not null references public.Users (id) check ( target <> initiator ),
+    initiator uuid            not null references public.users (id),
+    target    uuid            not null references public.users (id) check ( target <> initiator ),
     type      public.relation not null,
     primary key (initiator, target)
 );
@@ -77,19 +97,19 @@ create table if not exists public.Images
     number    int             not null
 );
 
-create table if not exists public.Grades
+create table if not exists public.grades
 (
-    initiator uuid          not null references public.Users (id),
-    target    uuid          not null references public.Users (id) check ( target <> initiator ),
-    grade     public.Rating not null,
+    initiator uuid          not null references public.users (id),
+    target    uuid          not null references public.users (id) check ( target <> initiator ),
+    grade     public.rating not null,
     primary key (initiator, target)
 );
 
-create table if not exists public.Notifications
+create table if not exists public.notifications
 (
     id          uuid                     not null default uuid_generate_v4() primary key,
-    origin_user uuid                     not null references public.Users (id),
-    target_user uuid                     not null references public.Users (id),
+    origin_user uuid                     not null references public.users (id),
+    target_user uuid                     not null references public.users (id),
     type        public.event             not null,
     seen        boolean                  not null default false,
     content     text                     null     default null
@@ -98,13 +118,13 @@ create table if not exists public.Notifications
     date        timestamp with time zone not null default now()
 );
 
-comment on column public.Notifications.content is 'this is used only if the notification type is Messaged, otherwise it must be null';
+comment on column public.notifications.content is 'this is used only if the notification type is Messaged, otherwise it must be null';
 
 
-create index on public.UserTags (user_id);
-create index on public.UserTags (tag_id);
+create index on public.user_tags (user_id);
+create index on public.user_tags (tag_id);
 
-create index on public.Users (gender);
-create index on public.Users (orientation);
-create index on public.Users (fame_rating desc);
-create index on public.Users (birth_date date_ops);
+create index on public.users (gender);
+create index on public.users (orientation);
+create index on public.users (fame_rating desc);
+create index on public.users (birth_date date_ops);

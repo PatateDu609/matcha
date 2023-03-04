@@ -80,6 +80,9 @@ func initViper() {
 	if err := conf.UnmarshalKey("session", &config.Conf.Session); err != nil {
 		logrus.Errorf("coudln't read session config: %s", err)
 	}
+	if err := conf.UnmarshalKey("oauth", &config.Conf.OAuth); err != nil {
+		logrus.Errorf("coudln't read oauth config: %s", err)
+	}
 
 	redisConf := defaultRedisConf
 	if err := conf.UnmarshalKey("redis", &redisConf); err != nil {

@@ -5,6 +5,7 @@ import (
 	"net/http/httputil"
 
 	"github.com/PatateDu609/matcha/config"
+	"github.com/PatateDu609/matcha/routes/public/auth"
 	"github.com/PatateDu609/matcha/utils/database"
 	"github.com/PatateDu609/matcha/utils/log"
 	"github.com/go-chi/chi"
@@ -61,6 +62,13 @@ func Setup() (router *chi.Mux) {
 		r.Post("/sign-up", signUp)
 		r.Post("/log-in", logIn)
 		r.Post("/upload", uploadFile)
+	})
+
+	router.Route("/auth", func(r chi.Router) {
+		r.Route("/google", func(r chi.Router) {
+			r.Get("/", auth.Google)
+			r.Put("/redirect", auth.GoogleRedirect)
+		})
 	})
 
 	return

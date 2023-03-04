@@ -15,6 +15,7 @@ type Config struct {
 	LogLevel    logrus.Level
 	RedisClient *redis.Client
 	Mail        Mail
+	OAuth       OAuth
 }
 
 var Conf Config

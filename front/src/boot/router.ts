@@ -7,6 +7,9 @@ import { boot } from 'quasar/wrappers';
 export default boot(({ router, store }) => {
   router.beforeEach(async (to: RouteLocationNormalized) => {
     if (to.path == '/log-in' || to.path == '/sign-up') return true;
+
+    if (to.path.startsWith('/auth/redirect')) return true;
+
     let authorized = false;
     const userStore = useUserStore(store);
 

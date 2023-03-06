@@ -14,10 +14,11 @@ func SetUserByIdentifier(ctx context.Context, identifier string, u User) error {
 	patch := database.Patch {
 		"first_name":	u.FirstName,
 		"last_name":	u.LastName,
-		"full_name":	u.FullName,
 		"username":		u.Username,
 		"email":		u.Email,
 		"biography":	u.Biography,
+		"gender":		u.Gender,
+		"orientation":	u.Orientation,
 	}
 
 	cond := database.NewCondition("id", database.EqualTo, identifier)

@@ -18,6 +18,8 @@ type User struct {
 	Biography  *string `json:"bio"`
 	FameRating int     `json:"score"`
 	Password   string  `json:"-"` // this field is ignored when exchanging data with user, it is intended for internal usage only
+	Gender     string  `json:"gender"`
+	Orientation string `json:"orientation"`
 }
 
 func (s User) GetName() string {

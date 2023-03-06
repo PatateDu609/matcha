@@ -22,14 +22,14 @@ let imageFile = ref(null);
 
 function onSubmit() {
   let data = {
-    'username': usernameText,
-    'first-name': firstNameText,
-    'last-name': lastNameText,
-    'bio': bioText,
-    'email': emailText,
-    'genre': genreSelect,
-    'preference': preferenceSelect,
-    'geolocalisation': geoCheck,
+    'username': usernameText.value,
+    'first-name': firstNameText.value,
+    'last-name': lastNameText.value,
+    'bio': bioText.value,
+    'email': emailText.value,
+    'gender': genreSelect.value,
+    'orientation': preferenceSelect.value,
+    'geolocalisation': geoCheck.value,
   }
 
   type EditUserPayload = {

@@ -36,12 +36,13 @@ function onSubmit() {
     id: string
   }
 
+  console.log(data)
+
   api.patch<EditUserPayload>('/user/set', data).then(response => {
     router.push('/profile')
   })
   .catch(reason => console.error(reason))
 
-  
 }
 
 </script>
@@ -85,12 +86,12 @@ function onSubmit() {
                   <q-select outlined v-model="preferenceSelect" :options="preferenceOptions" label="Preference *" />
               </q-item>
             </div>
-            <div style="overflow-y:hidden;overflow-x:scroll;width:400px;height:100px;white-space:nowrap;">
-              <base-image-input v-model="imageFile"/>
-              <base-image-input v-model="imageFile"/>
-              <base-image-input v-model="imageFile"/>
-              <base-image-input v-model="imageFile"/>
-              <base-image-input v-model="imageFile"/>
+            <div style="overflow-y:hidden;overflow-x:scroll;width:390px;height:100px;white-space:nowrap;">
+              <base-image-input v-model="imageFile" number="0"/>
+              <base-image-input v-model="imageFile" number="1"/>
+              <base-image-input v-model="imageFile" number="2"/>
+              <base-image-input v-model="imageFile" number="3"/>
+              <base-image-input v-model="imageFile" number="4"/>
             </div>
             <!-- <div style="padding-left:40px;">
               <q-uploader url="http://localhost:4000/upload" label="Profile Picture upload" field-name="myFile"

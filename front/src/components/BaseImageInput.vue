@@ -7,6 +7,7 @@
 
 <script>
 export default {
+    props: ['number'], // ???
     data () {
         return {
             imageData: null
@@ -27,6 +28,16 @@ export default {
         }
         reader.readAsDataURL(files[0])
         this.$emit('input', files[0])
+
+        let photo = files[0];
+        let formData = new FormData();
+        formData.append("photo", photo);
+        try {
+          fetch('http://localhost:4000/upload', {method: "POST", body: formData});
+          console.log("image ", number, " uploaded !")
+        } catch(e) {
+          console.log("upload error: ", e)
+        }
       }
     }
   }

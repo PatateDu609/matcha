@@ -9,6 +9,7 @@ import (
 )
 
 func setCurrentUser(w http.ResponseWriter, r *http.Request) {
+	payload, err := payloads.Unmarshal[payloads.User](r.Body)
 	if !session.GlobalSessions.CheckSessionCookie(r) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -35,7 +36,7 @@ func setCurrentUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := payloads.SetUserByIdentifier(w, r, raw)
+	user := payloads.SetUserByIdentifier(r.Context(), raw, payload)
 
 	if user == nil {
 		return

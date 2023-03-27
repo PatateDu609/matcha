@@ -6,6 +6,9 @@
 </template>
 
 <script>
+import { useUserStore } from 'stores/user';
+const userStore = useUserStore();
+
 export default {
     props: ['number'], // ???
     data () {
@@ -28,13 +31,13 @@ export default {
         }
         reader.readAsDataURL(files[0])
         this.$emit('input', files[0])
-
-        let photo = files[0];
-        let formData = new FormData();
-        formData.append("photo", photo);
         try {
+          let formData = new FormData();
+          formData.append("myFile", files[0]);
+          formData.append("number", this.number);
+          formData.append("user", userStore.uuid);
           fetch('http://localhost:4000/upload', {method: "POST", body: formData});
-          console.log("image ", number, " uploaded !")
+          console.log("image n", this.number, " for user ", userStore.uuid, " uploaded !")
         } catch(e) {
           console.log("upload error: ", e)
         }

@@ -4,8 +4,11 @@ import { ref } from 'vue'
 import { useUserStore } from 'stores/user';
 import {api} from 'boot/axios';
 import BaseImageInput from '../components/BaseImageInput.vue';
+import {useRouter} from 'vue-router'
 
-const userStore = useUserStore()
+const router = useRouter();
+
+const userStore = useUserStore();
 
 let usernameText = ref(userStore.username);
 let firstNameText = ref(userStore.firstName);
@@ -21,14 +24,26 @@ let geoCheck = ref(false);
 let imageFile = ref(null);
 
 function onSubmit() {
+  let gender = "Male";
+  if (genreSelect.value == "Femme")
+    gender = "Female";
+  else if (genreSelect.value == "Autre")
+    gender = "Other";
+  
+  let preference = "Heterosexuality";
+  if (preferenceSelect.value == "Homosexuel")
+    preference = "Homosexuality";
+  else if (preferenceSelect.value == "Bisexuel")
+    preference = "Bisexuality";
+
   let data = {
     'username': usernameText.value,
     'first-name': firstNameText.value,
     'last-name': lastNameText.value,
     'bio': bioText.value,
     'email': emailText.value,
-    'gender': genreSelect.value,
-    'orientation': preferenceSelect.value,
+    'gender': gender,
+    'orientation': preference,
     'geolocalisation': geoCheck.value,
   }
 

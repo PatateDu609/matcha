@@ -8,8 +8,9 @@ import (
 )
 
 type Image struct {
-	owner   string    `json:"owner"`
-	path    string    `json:"path"`
+	Owner   string    `json:"owner"`
+	Path    string    `json:"path"`
+	Number  int       `json:"number"`
 }
 
 func (s Image) GetName() string {
@@ -17,7 +18,7 @@ func (s Image) GetName() string {
 }
 
 func (s Image) GetAlias() string {
-	return "u"
+	return "i"
 }
 
 func (s Image) GetColumns() []string {

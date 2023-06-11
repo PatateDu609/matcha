@@ -92,7 +92,7 @@ create table if not exists public.relationships
 
 create table if not exists public.Images
 (
-    owner     uuid            not null references public.Users (id),
+    owner     uuid            not null references public.users (id),
     path      varchar(256)    not null,
     number    int             not null
 );

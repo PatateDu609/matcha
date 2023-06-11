@@ -25,3 +25,5 @@ back/auth/jwt/key/private.pem
 postgres_password
 
 *.zip
+
+back/upload/*

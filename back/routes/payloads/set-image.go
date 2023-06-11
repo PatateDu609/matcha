@@ -12,7 +12,7 @@ func (i *Image) PrepareInsertion() ([]string, []any) {
 	return keys, database.PrepareValues(i)
 }
 
-func (i *Image) Push(w http.ResponseWriter, r *http.Request) error {
+func (i *Image) Push(r *http.Request) error {
 	ctx := r.Context()
 
 	if err := database.Insert(ctx, i); err != nil {

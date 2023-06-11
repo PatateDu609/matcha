@@ -14,7 +14,7 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
     // maximum upload of 10 MB files.
     r.ParseMultipartForm(10 << 20)
     file, handler, err := r.FormFile("myFile")
-    // number, handler, err := r.FormFile("number")
+    num := r.FormValue("number")
     user := r.FormValue("user")
     if err != nil {
         log.Logger.Infof("Error Retrieving the File")
@@ -42,4 +42,7 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
     }
     tempFile.Write(fileBytes)
     fmt.Fprintf(w, "Successfully Uploaded File\n")
+
+    thepath:= "/upload/" + user + tempFile.Name()
+    setImage(thepath, num, user, r)
 }
